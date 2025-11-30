@@ -1,0 +1,20 @@
+.genesys-badge {
+  display: inline-block;
+  background-color: #e02d2d; /* 赤系 */
+  color: #fff;
+  font-size: 0.85em;
+  font-weight: bold;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-left: 6px;
+  vertical-align: middle;
+  line-height: 1.2;
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+  white-space: nowrap; /* 折り返し防止 */
+  z-index: 10;
+}
+
+/* ポイントによって色を変える例（オプション） */
+.genesys-badge[data-point="0"] { background-color: #888; }
+.genesys-badge[data-point="1"] { background-color: #2196F3; } /* 青 */
+.genesys-badge[data-point="2"] { background-color: #e02d2d; } /* 赤 */

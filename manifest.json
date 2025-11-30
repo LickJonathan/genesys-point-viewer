@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Yugioh Genesys Point Viewer",
+  "version": "1.1",
+  "description": "遊戯王ニューロン(公式DB)上にGenesysポイントを表示します。",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.db.yugioh-card.com/yugiohdb/member_deck.action*"
+      ],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["/points.json"],
+      "matches": ["https://www.db.yugioh-card.com/*"]
+    }
+  ]
+}
