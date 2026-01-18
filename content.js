@@ -109,8 +109,8 @@ function processPage() {
   // II. ポイント合計処理 (枚数に基づいて計算)
   // ------------------------------------
   let totalPoints = 0;
-  // すべてのカードエントリの親要素 (.t_row: テキスト詳細表示, tr.row: テキスト表示) を取得
-  const cardEntries = document.querySelectorAll('.t_row, tr.row');
+  // すべてのカードエントリの親要素 (tr.row: テキスト表示) を取得
+  const cardEntries = document.querySelectorAll('tr.row');
 
   cardEntries.forEach(entry => {
     // サイドデッキ (#side_list) 内のカードは計算に含めない
@@ -180,7 +180,7 @@ function addBadge(targetElement, point, isImage = false) {
   }
 }
 
-// 5. 合計ポイントの表示処理 (変更なし)
+// 5. 合計ポイントの表示処理
 function displayTotalPoints(totalPoints) {
   const totalDiv = document.getElementById('num_total');
   if (!totalDiv) return;
