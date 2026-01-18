@@ -109,6 +109,11 @@ function processPage() {
   const cardEntries = document.querySelectorAll('.t_row, tr.row');
 
   cardEntries.forEach(entry => {
+    // サイドデッキ (#side_list) 内のカードは計算に含めない
+    if (entry.closest('#side_list')) {
+      return;
+    }
+
     // 1. カード名と枚数情報を取得
 
     let nameElement = entry.querySelector('td.card_name span');
