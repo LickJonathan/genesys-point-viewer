@@ -73,31 +73,35 @@ function runScript() {
 function processPage() {
   // バッジ付与処理のセレクタ（最も内側のカード名要素に限定）
   const badgeSelectors = [
-    'span.card_name',    // カード詳細表示のカード名
-    'td.card_name span'  // テキスト表示のカード名 (td.card_name内のspan)
+    'span.card_name',    // テキスト詳細表示のカード名
+    'td.card_name span', // テキスト表示のカード名 (td.card_name内のspan)
+    'img[alt]'           // 画像表示のカード名    
   ];
 
   // ------------------------------------
   // I. バッジ付与処理
   // ------------------------------------
-  // テキスト表示のカード名td.card_name直下のspanを確実に含むため、セレクタを調整
-  const badgeElements = document.querySelectorAll(badgeSelectors.join(', '));
+  const badgeElements = document.querySelectorAll(badgeSelectors);
 
   badgeElements.forEach(element => {
     // 処理済みチェック
-    if (element.dataset.genesysProcessed === 'true' || element.querySelector('.genesys-badge')) {
+    // 画像の場合は親要素にバッジを付けるため、親要素をチェック
+    const isImage = element.tagName.toLowerCase() === 'img';
+    const checkTarget = isImage ? element.parentElement : element;
+
+    if (checkTarget.dataset.genesysProcessed === 'true' || checkTarget.querySelector('.genesys-badge')) {
       return; // バッジ付与は一度きり
     }
 
-    const cardName = element.textContent.trim();
+    const cardName = isImage ? element.getAttribute('alt') : element.textContent.trim();
     if (!cardName) return;
 
     if (pointData.hasOwnProperty(cardName)) {
       // 2. バッジ付与
-      addBadge(element, pointData[cardName]);
+      addBadge(element, pointData[cardName], isImage);
 
       // 3. 処理済みフラグをセット
-      element.dataset.genesysProcessed = 'true';
+      checkTarget.dataset.genesysProcessed = 'true';
     }
   });
 
@@ -105,8 +109,8 @@ function processPage() {
   // II. ポイント合計処理 (枚数に基づいて計算)
   // ------------------------------------
   let totalPoints = 0;
-  // すべてのカードエントリの親要素 (.t_row: 詳細表示, tr.row: テキスト表示) を取得
-  const cardEntries = document.querySelectorAll('.t_row, tr.row');
+  // すべてのカードエントリの親要素 (tr.row: テキスト表示) を取得
+  const cardEntries = document.querySelectorAll('tr.row');
 
   cardEntries.forEach(entry => {
     // サイドデッキ (#side_list) 内のカードは計算に含めない
@@ -154,16 +158,29 @@ function processPage() {
   displayTotalPoints(totalPoints);
 }
 
-// 4. バッジの追加処理 (変更なし)
-function addBadge(targetElement, point) {
+// 4. バッジの追加処理
+function addBadge(targetElement, point, isImage = false) {
   const badge = document.createElement('span');
   badge.className = 'genesys-badge';
   badge.innerText = `${point}pt`;
   badge.dataset.point = point;
-  targetElement.appendChild(badge);
+
+  if (isImage) {
+    // 画像の場合の特別スタイル
+    badge.style.position = 'absolute';
+    badge.style.top = '5px';
+    badge.style.right = '5px';
+    badge.style.zIndex = '5';
+    badge.style.pointerEvents = 'none';
+
+    // 画像自体の親要素に追加
+    targetElement.parentElement.appendChild(badge);
+  } else {
+    targetElement.appendChild(badge);
+  }
 }
 
-// 5. 合計ポイントの表示処理 (変更なし)
+// 5. 合計ポイントの表示処理
 function displayTotalPoints(totalPoints) {
   const totalDiv = document.getElementById('num_total');
   if (!totalDiv) return;
